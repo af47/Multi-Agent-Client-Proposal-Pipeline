@@ -7,7 +7,7 @@ iterations so the full revision history is preserved in RunState.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, ClassVar
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -47,7 +47,7 @@ class ProposalOutput(BaseModel):
         description="Pricing benchmark data injected via tool call (summary).",
     )
 
-    REQUIRED_SECTIONS: list[str] = [
+    REQUIRED_SECTIONS: ClassVar[list[str]] = [
         "Executive Summary",
         "Understanding",
         "Approach",

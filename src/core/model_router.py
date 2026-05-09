@@ -40,8 +40,8 @@ class ModelPricing(NamedTuple):
 
 # ── Model identifiers ─────────────────────────────────────────────────────────
 
-_DEFAULT_SONNET = "claude-3-5-sonnet-20241022"
-_DEFAULT_HAIKU = "claude-3-5-haiku-20241022"
+_DEFAULT_SONNET = "claude-sonnet-4-5-20250929"
+_DEFAULT_HAIKU = "claude-haiku-4-5-20251001"
 
 # Pricing constants
 _PRICING: dict[ModelTier, ModelPricing] = {

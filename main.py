@@ -80,13 +80,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--sonnet-model",
-        default=os.getenv("SONNET_MODEL", "claude-3-5-sonnet-20241022"),
-        help="Sonnet model for heavy tasks: debrief, proposal, critique (default: claude-3-5-sonnet-20241022)",
+        default=os.getenv("SONNET_MODEL", "claude-sonnet-4-5-20250929"),
+        help="Sonnet model for heavy tasks: debrief, proposal, critique (default: claude-sonnet-4-5-20250929)",
     )
     parser.add_argument(
         "--haiku-model",
-        default=os.getenv("HAIKU_MODEL", "claude-3-5-haiku-20241022"),
-        help="Haiku model for lightweight tasks: feedback translation, schema retries (default: claude-3-5-haiku-20241022)",
+        default=os.getenv("HAIKU_MODEL", "claude-haiku-4-5-20251001"),
+        help="Haiku model for lightweight tasks: feedback translation, schema retries (default: claude-haiku-4-5-20251001)",
     )
     return parser.parse_args()
 
