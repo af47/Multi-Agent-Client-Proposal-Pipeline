@@ -67,11 +67,12 @@ class PipelineOrchestrator:
         self._proposal = ProposalAgent(client)
         self._review = ReviewAgent(client)
 
-    def run(self, inputs: PipelineInputs) -> RunState:
+    def run(self, inputs: PipelineInputs, run_id: Optional[str] = None) -> RunState:
         """Execute the full pipeline from inputs to final proposal.
 
         Args:
             inputs: Loaded PipelineInputs (intake + transcripts).
+            run_id: Explicit ID for the run (e.g., transcript name). If None, generates UUID.
 
         Returns:
             Finalized RunState with all artifacts and traces.
@@ -81,6 +82,7 @@ class PipelineOrchestrator:
             input_text=inputs.combined_text,
             run_label=inputs.run_label,
             max_iterations=self._max_iterations,
+            run_id=run_id,
         )
         logger = PipelineLogger(state.run_id, self._runs_dir / state.run_id)
 

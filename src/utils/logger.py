@@ -131,7 +131,7 @@ class PipelineLogger:
             self._logger.addHandler(fh)
 
         # Structured JSON trace file
-        self._trace_file = self.log_dir / "traces.jsonl"
+        self._trace_file = self.log_dir / "logs.json"
 
     # ── Public logging methods ────────────────────────────────────────────────
 

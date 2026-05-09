@@ -63,8 +63,9 @@ class RunState:
         input_text: str,
         run_label: str = "",
         max_iterations: int = 5,
+        run_id: Optional[str] = None,
     ) -> "RunState":
-        run_id = str(uuid.uuid4())[:8]
+        run_id = run_id or str(uuid.uuid4())[:8]
         input_hash = hashlib.sha256(input_text.encode()).hexdigest()[:16]
         return cls(
             run_id=run_id,
@@ -139,21 +140,30 @@ class RunState:
     # ── Persistence ───────────────────────────────────────────────────────────
 
     def save(self, runs_dir: Path) -> Path:
-        """Serialize the full RunState to JSON in runs/<run_id>/state.json."""
+        """Serialize the full RunState to JSON."""
         run_dir = Path(runs_dir) / self.run_id
         run_dir.mkdir(parents=True, exist_ok=True)
 
         state_dict = self._to_dict()
-        state_path = run_dir / "state.json"
+        state_path = run_dir / "metadata.json"
         with open(state_path, "w", encoding="utf-8") as f:
             json.dump(state_dict, f, indent=2, default=str)
 
-        # Also write the latest proposal as Markdown for easy reading
         if self.proposals:
-            proposal_path = run_dir / "latest_proposal.md"
+            proposal_path = run_dir / "proposal.md"
             proposal_path.write_text(self.proposals[-1].content, encoding="utf-8")
 
-        # Write summary
+        if self.matrix:
+            matrix_path = run_dir / "matrix.json"
+            with open(matrix_path, "w", encoding="utf-8") as f:
+                json.dump(self.matrix.model_dump(), f, indent=2, default=str)
+
+        if self.critiques:
+            review_path = run_dir / "review.json"
+            with open(review_path, "w", encoding="utf-8") as f:
+                json.dump(self.critiques[-1].model_dump(), f, indent=2, default=str)
+
+        # Write summary (optional but keeping for CLI display)
         summary_path = run_dir / "summary.json"
         with open(summary_path, "w", encoding="utf-8") as f:
             json.dump(self._summary_dict(), f, indent=2, default=str)
@@ -163,7 +173,7 @@ class RunState:
     @classmethod
     def load(cls, run_id: str, runs_dir: Path) -> "RunState":
         """Load a RunState from disk."""
-        state_path = Path(runs_dir) / run_id / "state.json"
+        state_path = Path(runs_dir) / run_id / "metadata.json"
         if not state_path.exists():
             raise FileNotFoundError(f"No saved run found: {state_path}")
         with open(state_path, encoding="utf-8") as f:
