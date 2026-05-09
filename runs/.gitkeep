@@ -1,0 +1,10 @@
+# runs directory — pipeline output is auto-generated here
+
+Each pipeline run creates a subdirectory named by run ID containing:
+  - state.json           Full serialized RunState (all proposals, critiques, traces)
+  - latest_proposal.md   Final proposal in Markdown
+  - traces.jsonl         Per-agent observability traces (JSONL)
+  - pipeline.log         Human-readable structured log
+  - summary.json         Quick-reference summary (run_id, status, cost, score)
+
+This directory is tracked in git (via this .gitkeep) but individual run files are gitignored.
