@@ -19,6 +19,10 @@ runs/*/traces.jsonl
 runs/*/pipeline.log
 runs/*/summary.json
 
+# Eval reports (auto-generated after each run)
+eval_logs/eval_report_*.md
+eval_logs/latest.md
+
 # IDE
 .vscode/
 .idea/

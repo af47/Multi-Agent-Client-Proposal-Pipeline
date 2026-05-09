@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import subprocess
 import sys
 from pathlib import Path
 
@@ -30,10 +29,12 @@ from src.core.claude_client import ClaudeClient, PipelineError
 from src.core.orchestrator import PipelineOrchestrator
 from src.core.state import RunState
 from src.utils.loader import InputLoader
+from evals.eval_runner import run_suite, save_report, print_suite_summary
 
 BASE_DIR = Path(__file__).parent
 INPUTS_DIR = BASE_DIR / "inputs"
 RUNS_DIR = BASE_DIR / "runs"
+EVAL_LOGS_DIR = BASE_DIR / "eval_logs"
 
 
 def parse_args() -> argparse.Namespace:
@@ -83,31 +84,40 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def run_evals() -> None:
-    """Run both eval scripts."""
+def run_evals(run_ids: list[str] | None = None, triggered_by: str = "cli") -> bool:
+    """Run the full eval suite via eval_runner and save a timestamped report.
+
+    Args:
+        run_ids: Specific run IDs to evaluate. None = all runs.
+        triggered_by: Label for the trigger source.
+
+    Returns:
+        True if all evals passed, False otherwise.
+    """
     print("\n" + "═" * 60)
     print("  RUNNING EVAL SUITE")
+    if run_ids:
+        print(f"  Evaluating run(s): {', '.join(run_ids)}")
+    else:
+        print("  Evaluating: all saved runs")
     print("═" * 60)
 
-    evals = [
-        "evals/contradiction_recall_eval.py",
-        "evals/feedback_loop_regression_eval.py",
-    ]
+    suite = run_suite(
+        runs_dir=RUNS_DIR,
+        run_ids=run_ids,
+        triggered_by=triggered_by,
+    )
 
-    all_passed = True
-    for eval_path in evals:
-        print(f"\n▶ Running: {eval_path}")
-        result = subprocess.run(
-            [sys.executable, eval_path, "--runs-dir", str(RUNS_DIR)],
-            cwd=BASE_DIR,
-        )
-        if result.returncode != 0:
-            all_passed = False
+    if not suite.run_reports and not suite.error_runs:
+        print("  No runs found to evaluate.")
+        return True
 
-    print("\n" + "═" * 60)
-    print(f"  EVAL SUITE: {'✅ ALL PASSED' if all_passed else '❌ SOME FAILED'}")
-    print("═" * 60)
-    sys.exit(0 if all_passed else 1)
+    print_suite_summary(suite)
+    report_path = save_report(suite, EVAL_LOGS_DIR)
+    print(f"  📄 Eval report saved: {report_path.relative_to(BASE_DIR)}")
+    print(f"  📄 Latest report:     eval_logs/latest.md")
+
+    return suite.suite_passed
 
 
 def list_runs() -> None:
@@ -236,8 +246,8 @@ def main() -> None:
     # ── Subcommands ──────────────────────────────────────────────────────────
 
     if args.eval:
-        run_evals()
-        return
+        passed = run_evals(triggered_by="cli")
+        sys.exit(0 if passed else 1)
 
     if args.list_runs:
         list_runs()
@@ -260,6 +270,8 @@ def main() -> None:
 
     transcript_filter = None if args.transcript == "both" else args.transcript
 
+    completed_run_ids: list[str] = []
+
     # Run transcript A
     if args.transcript in ("a", "both"):
         try:
@@ -271,6 +283,7 @@ def main() -> None:
                 run_label="intake+transcript_a",
             )
             print_final_summary(state_a)
+            completed_run_ids.append(state_a.run_id)
         except PipelineError as e:
             print(f"❌ Pipeline error (transcript A): {e}")
             sys.exit(1)
@@ -286,9 +299,17 @@ def main() -> None:
                 run_label="intake+transcript_b",
             )
             print_final_summary(state_b)
+            completed_run_ids.append(state_b.run_id)
         except PipelineError as e:
             print(f"❌ Pipeline error (transcript B): {e}")
             sys.exit(1)
+
+    # ── Auto-run evals on completed runs ────────────────────────────────────
+    if completed_run_ids:
+        print(f"\n{'─' * 60}")
+        print(f"  ⚙  Auto-running evals on {len(completed_run_ids)} completed run(s)...")
+        print(f"{'─' * 60}")
+        run_evals(run_ids=completed_run_ids, triggered_by="post_pipeline")
 
 
 if __name__ == "__main__":

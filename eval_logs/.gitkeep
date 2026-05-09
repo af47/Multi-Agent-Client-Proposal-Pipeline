@@ -1,0 +1,10 @@
+# eval_logs directory — eval reports are auto-generated here after each pipeline run
+
+Each file is named:  eval_report_YYYY-MM-DD_HH-MM-SS.md
+The latest report is always also available as:  latest.md
+
+Reports include:
+  - Timestamp and trigger source (post_pipeline / cli / manual)
+  - Per-run summary table with grades
+  - Contradiction Recall Eval: precision, recall, missed contradictions
+  - Feedback Loop Regression Eval: test scores, failures, warnings
