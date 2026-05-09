@@ -1,0 +1,106 @@
+{
+  "business": {
+    "pain_points": {
+      "statement": "Dispatcher workflow requires excessive manual double-entry between custom dispatch tool (Routemaster) and Salesforce; finance is 3 weeks behind on invoicing because data never lines up; dispatchers cannot keep working this way; current DSO is significantly above industry standard (18 days implied vs. target 5 days).",
+      "confidence": "high",
+      "source_excerpt": "Our dispatcher workflow is killing us. Too much manual entry between our custom dispatch tool and Salesforce, drivers hate the mobile app, and finance is 3 weeks behind on invoicing because the data never lines up. [...] Sarah: the workflow fixes are needed regardless because the dispatchers can't keep working this way. [...] Alex: I'd want to focus on the invoicing reconciliation first because that's directly affecting cash flow, and then the dispatcher workflow because it's the upstream cause of the bad invoicing data.",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "30% reduction in dispatch time per load; return to industry-standard 5-day DSO on invoicing; eliminate manual double-entry between Routemaster and Salesforce; avoid hiring four additional dispatchers next year; free up $1.4M in working capital currently stuck in unbilled receivables.",
+      "confidence": "high",
+      "source_excerpt": "Alex: Based on what Sarah described last week, I'd want to focus on the invoicing reconciliation first because that's directly affecting cash flow, and then the dispatcher workflow because it's the upstream cause of the bad invoicing data. [...] Sarah: Roughly, a 30% reduction in dispatch time means we don't need to hire four additional dispatchers next year, which is about $320k in fully-loaded comp. And a return to five-day DSO from where we are now frees up about $1.4M in working capital that's currently stuck in unbilled receivables.",
+      "contradiction_note": null
+    },
+    "success_criteria": {
+      "statement": "Pilot in production by end of Q3 (Sept 30); measurable 30% reduction in dispatch time per load; return to 5-day DSO; avoid $320k in additional dispatcher hiring costs; free up $1.4M in working capital; fixed-fee engagement with milestone payments tied to specific outcomes.",
+      "confidence": "high",
+      "source_excerpt": "Pilot in production by end of Q3 (Sept 30). [...] Rita: Q3 is a budget cycle thing. If we don't have something in production by end of September, the funding gets reallocated. That part isn't negotiable. [...] Sarah: Roughly, a 30% reduction in dispatch time means we don't need to hire four additional dispatchers next year, which is about $320k in fully-loaded comp. And a return to five-day DSO from where we are now frees up about $1.4M in working capital [...] Alex: I'll give you a fixed-fee proposal with milestone payments tied to specific outcomes, and if we miss the milestones you don't pay for them.",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "CFO was burned by previous vendor in 2023 and is skeptical of consulting engagements; competitive engagement with two other firms; two prior internal projects to fix dispatcher workflow both failed; budget disagreement between VP Ops and CFO; Q3 timeline is aggressive and CTO believes Q4 is more realistic; funding gets reallocated if pilot not in production by Sept 30.",
+      "confidence": "high",
+      "source_excerpt": "Rita Donovan \u2014 CFO. Controls the budget. Skeptical of consulting engagements; got burned by a previous vendor in 2023. [...] This is a competitive engagement \u2014 they are also talking to two other firms. [...] Marcus: We've tried internal projects to fix this exact thing twice and they both failed. What's different this time? [...] Marcus: Q3 was your commitment, not mine. I never agreed to Q3. I think Q4 is more realistic if we're doing it right. [...] Rita: Q3 is a budget cycle thing. If we don't have something in production by end of September, the funding gets reallocated.",
+      "contradiction_note": null
+    }
+  },
+  "technical": {
+    "pain_points": {
+      "statement": "Routemaster (custom Rails 5 app) is 7 years old, built for a 50-person company, now at end of useful life; codebase is too fragile to ship features efficiently; every change takes three times as long as it should due to technical debt; tech integration from 2024 acquisitions (40% growth) is incomplete; no data warehouse (BI run from Excel exports); driver mobile app (React Native) last updated in 2023.",
+      "confidence": "high",
+      "source_excerpt": "Marcus: Routemaster is seven years old, it was built by two engineers including me back when we were a 50-person company, and it's at the end of its useful life. [...] Marcus: Technical debt in Routemaster. We can't ship features anymore because the codebase is too fragile. Every change takes three times as long as it should. [...] Northwind grew 40% in 2024 by acquiring two smaller brokerages. Tech integration from those acquisitions is incomplete. [...] Data warehouse: None (BI is run out of Excel exports from Salesforce) [...] Driver mobile app: Custom React Native app, last major update in 2023",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "CTO wants full platform replacement with dispatch-as-a-service SaaS solution that integrates with Salesforce out of box, includes mobile app, eliminates need to maintain Routemaster, and can be live in 9 months; VP Ops wants incremental workflow fixes on top of existing Routemaster with clean integration layer that is 60-70% portable if platform changes later; workflow logic built in layer on top of Routemaster talking to Salesforce and driver app through clean integration points.",
+      "confidence": "contradicted",
+      "source_excerpt": "Marcus: I had a demo last week from a vendor \u2014 I won't name them \u2014 that does dispatch-as-a-service, full SaaS platform, integrates with Salesforce out of the box, mobile app included, the works. We could be live on it in nine months and we'd never have to maintain Routemaster again. [...] Sarah: Marcus, $600k is not in scope for what we're talking about today. [...] Alex: If we build it the way I have in mind \u2014 workflow logic in a layer on top of Routemaster, talking to Salesforce and the driver app through clean integration points \u2014 then most of the workflow logic is portable.",
+      "contradiction_note": "CTO (Marcus) believes the right technical solution is full platform replacement with SaaS vendor ($600k year one, $400k ongoing). VP Ops (Sarah) believes incremental workflow fixes on existing platform are the right approach. These are fundamentally different technical strategies."
+    },
+    "success_criteria": {
+      "statement": "Consultant proposes 60-70% of Phase 1 work survives a platform change; workflow logic portable if built in integration layer; CTO requires architecture review and sign-off before committing; must not interfere with November 15 ELD compliance work in driver app.",
+      "confidence": "medium",
+      "source_excerpt": "Alex: If we build it the way I have in mind \u2014 workflow logic in a layer on top of Routemaster, talking to Salesforce and the driver app through clean integration points \u2014 then most of the workflow logic is portable. The pieces that touch Routemaster directly would have to be rewritten, but those are a minority of the work. I'd estimate 60-70% of the Phase 1 work survives a platform change. [...] Marcus: That's better than I expected. I'd want to see the architecture before I sign off on that number. [...] Sarah: whatever we build needs to not get in the way of the compliance work.",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "CTO and VP Ops fundamentally disagree on whether problem is workflow vs. platform; CTO concerned $300k consulting engagement will be wasted if platform replaced in 2 years; two internal attempts to fix dispatcher workflow have already failed; ELD compliance work in driver app (Nov 15 deadline) may conflict with Phase 2 driver app work; no TMS vendor selected yet (currently evaluating); Routemaster maintained by only 2 engineers; architecture portability estimate (60-70%) not yet validated.",
+      "confidence": "high",
+      "source_excerpt": "Marcus: Sarah and I have been having a parallel conversation about this for months and we don't agree on what the problem is. [...] Sarah thinks this is a workflow problem. I think this is a platform problem. [...] Marcus: if we sign a $300k consulting engagement to fix workflows on a platform we're going to throw away in two years, we're wasting $300k. [...] Marcus: We've tried internal projects to fix this exact thing twice and they both failed. [...] Marcus: That's a totally different system. The ELD work is in the driver app, which Alex just said he's deferring. [...] TMS (Transportation Management System): Currently evaluating vendors. No selection made. [...] Dispatch tool: Custom Rails 5 app, internally maintained by 2 engineers",
+      "contradiction_note": null
+    }
+  },
+  "operational": {
+    "pain_points": {
+      "statement": "40 dispatchers performing excessive manual double-entry between Routemaster and Salesforce; drivers hate the mobile app; finance 3 weeks behind on invoicing due to data misalignment; will need to hire 4 additional dispatchers next year if workflow not improved; $1.4M in working capital stuck in unbilled receivables; dispatchers cannot sustain current workflow.",
+      "confidence": "high",
+      "source_excerpt": "~200 employees, 40 dispatchers, ~600 contracted drivers [...] Our dispatcher workflow is killing us. Too much manual entry between our custom dispatch tool and Salesforce, drivers hate the mobile app, and finance is 3 weeks behind on invoicing because the data never lines up. [...] Sarah: a 30% reduction in dispatch time means we don't need to hire four additional dispatchers next year, which is about $320k in fully-loaded comp. And a return to five-day DSO from where we are now frees up about $1.4M in working capital that's currently stuck in unbilled receivables. [...] Sarah: the dispatchers can't keep working this way.",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "Eliminate manual double-entry for dispatchers; improve driver mobile app experience; achieve real-time or near-real-time invoicing data alignment; avoid hiring 4 additional dispatchers; 30% reduction in dispatch time per load; return finance to industry-standard 5-day DSO; pilot operational by end of Q3.",
+      "confidence": "high",
+      "source_excerpt": "Alex: I'd want to focus on the invoicing reconciliation first because that's directly affecting cash flow, and then the dispatcher workflow because it's the upstream cause of the bad invoicing data. [...] Sarah: a 30% reduction in dispatch time means we don't need to hire four additional dispatchers next year [...] And a return to five-day DSO from where we are now frees up about $1.4M in working capital [...] Pilot in production by end of Q3 (Sept 30).",
+      "contradiction_note": null
+    },
+    "success_criteria": {
+      "statement": "Pilot in production by Sept 30 (Q3 deadline); measurable 30% reduction in dispatch time per load; invoicing reconciliation automated to achieve 5-day DSO; avoid $320k in additional dispatcher hiring; dispatcher adoption achieved (training plan in scope); driver app improvements deferred to Phase 2.",
+      "confidence": "high",
+      "source_excerpt": "Pilot in production by end of Q3 (Sept 30). [...] Rita: If we don't have something in production by end of September, the funding gets reallocated. That part isn't negotiable. [...] Alex: I'd want to focus on the invoicing reconciliation first because that's directly affecting cash flow, and then the dispatcher workflow because it's the upstream cause of the bad invoicing data. The driver app I'd defer. [...] Sarah: a 30% reduction in dispatch time means we don't need to hire four additional dispatchers next year, which is about $320k in fully-loaded comp.",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "Two prior internal projects to fix dispatcher workflow both failed; dispatcher adoption is critical success factor and must be planned; Q3 timeline may be too aggressive (CTO believes Q4 more realistic); driver app deferred to Phase 2 but overlaps with ELD compliance work (Nov 15 deadline); tech integration from 2024 acquisitions still incomplete; no clarity on how workflow fixes coordinate with ongoing Routemaster maintenance by 2-person engineering team.",
+      "confidence": "high",
+      "source_excerpt": "Marcus: We've tried internal projects to fix this exact thing twice and they both failed. What's different this time? [...] Marcus: Q3 was your commitment, not mine. I never agreed to Q3. I think Q4 is more realistic if we're doing it right. [...] Marcus: That's a totally different system. The ELD work is in the driver app, which Alex just said he's deferring. [...] Sarah: if we touch the driver app at all in Phase 2, we need to do it in a way that supports ELD. [...] Northwind grew 40% in 2024 by acquiring two smaller brokerages. Tech integration from those acquisitions is incomplete. [...] Dispatch tool: Custom Rails 5 app, internally maintained by 2 engineers",
+      "contradiction_note": null
+    }
+  },
+  "strategic": {
+    "pain_points": {
+      "statement": "Company grew 40% in 2024 via acquisition of two smaller brokerages but tech integration incomplete; existing platform (Routemaster) built for 50-person company now serving 200 employees; CTO and VP Ops have unresolved multi-month disagreement on platform vs. workflow strategy; CFO burned by previous vendor (2023) creating trust deficit; no long-term platform decision made; currently evaluating TMS vendors with no selection.",
+      "confidence": "high",
+      "source_excerpt": "Northwind grew 40% in 2024 by acquiring two smaller brokerages. Tech integration from those acquisitions is incomplete. [...] Marcus: Routemaster is seven years old, it was built by two engineers including me back when we were a 50-person company, and it's at the end of its useful life. [...] Marcus: Sarah and I have been having a parallel conversation about this for months and we don't agree on what the problem is. [...] Rita Donovan \u2014 CFO. Controls the budget. Skeptical of consulting engagements; got burned by a previous vendor in 2023. [...] TMS (Transportation Management System): Currently evaluating vendors. No selection made.",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "Resolve platform vs. workflow strategy tension between CTO and VP Ops; make incremental progress on operational pain within budget constraints while preserving optionality for future platform decision; build workflow fixes with 60-70% portability if platform changes; achieve measurable ROI ($320k cost avoidance + $1.4M working capital) to justify Phase 2 investment; restore CFO confidence in consulting engagements through fixed-fee milestone-based delivery.",
+      "confidence": "medium",
+      "source_excerpt": "Alex: If we build it the way I have in mind \u2014 workflow logic in a layer on top of Routemaster, talking to Salesforce and the driver app through clean integration points \u2014 then most of the workflow logic is portable. [...] I'd estimate 60-70% of the Phase 1 work survives a platform change. [...] Sarah: a 30% reduction in dispatch time means we don't need to hire four additional dispatchers next year, which is about $320k in fully-loaded comp. And a return to five-day DSO from where we are now frees up about $1.4M in working capital [...] Alex: I'll give you a fixed-fee proposal with milestone payments tied to specific outcomes, and if we miss the milestones you don't pay for them. [...] Rita: Now we're talking.",
+      "contradiction_note": null
+    },
+    "success_criteria": {
+      "statement": "Deliver Q3 pilot to preserve budget allocation (funding reallocated if missed); achieve measurable ROI to justify Phase 2; CTO sign-off on architecture ensuring portability; CFO confidence restored through fixed-fee milestone delivery; position for Phase 2 award; resolve 'why this time is different' question given two prior internal failures; maintain competitive advantage vs. two other firms via Cascade Freight reference and fixed-fee commitment.",
+      "confidence": "high",
+      "source_excerpt": "Rita: Q3 is a budget cycle thing. If we don't have something in production by end of September, the funding gets reallocated. That part isn't negotiable. [...] Marcus: I'd want to see the architecture before I sign off on that number. [...] Alex: I'll give you a fixed-fee proposal with milestone payments tied to specific outcomes, and if we miss the milestones you don't pay for them. [...] Rita: Now we're talking. [...] This is a competitive engagement \u2014 they are also talking to two other firms. [...] Sarah has asked us specifically because we did similar work for a peer brokerage (Cascade Freight) in 2024. [...] Marcus: We've tried internal projects to fix this exact thing twice and they both failed. What's different this time?",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "Budget cap contradicted between CFO ($300k firm cap) and VP Ops ($250-400k range discussed); CTO not opposed but skeptical and concerned about wasting investment if platform replaced; CFO and CTO both guarded/skeptical sentiment; competitive situation with 2 other firms; ELD compliance deadline (Nov 15) surfaced late and may expand scope unexpectedly; Head of Compliance (Rajiv) not yet engaged; no clarity on how Phase 1 coordinates with TMS vendor selection process; platform replacement decision deferred but unresolved; Phase 2 scope and budget undefined.",
+      "confidence": "high",
+      "source_excerpt": "Rita: Marcus, the budget I approved is $300k. That's the cap. [...] Sarah: Rita, that's not what we discussed. We discussed a six-month Phase 1 in the $250 to $400 range, with a Phase 2 to be scoped later. [...] Rita: I approved a six-month engagement up to $300k. [...] Marcus: I'm skeptical, but I'm not opposed. [...] Rita: Same. [...] This is a competitive engagement \u2014 they are also talking to two other firms. [...] Sarah: The ELD compliance deadline in November is real. [...] Rita: This is the first I'm hearing about a November deadline that could affect our operating authority. Why is this not the top priority? [...] Rajiv Mehta \u2014 Head of Compliance (mentioned but not yet engaged). [...] TMS (Transportation Management System): Currently evaluating vendors. No selection made.",
+      "contradiction_note": "Budget is contradicted: CFO states firm $300k cap, VP Ops recalls $250-400k range discussion. This discrepancy is unresolved and noted for offline resolution."
+    }
+  }
+}

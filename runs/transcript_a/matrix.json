@@ -1,0 +1,106 @@
+{
+  "business": {
+    "pain_points": {
+      "statement": "Invoicing reconciliation is 3 weeks behind due to manual detective work on every invoice caused by data mismatches across systems (driver app, Routemaster, Salesforce). This creates a cash flow problem with delayed A/R. Dispatcher double-entry across three systems (Routemaster, Salesforce, driver app) for 60-90 assignments per day per dispatcher (40 dispatchers total) creates operational inefficiency and is the upstream source of bad data.",
+      "confidence": "high",
+      "source_excerpt": "Right now they're three weeks behind. Three weeks of revenue we should have invoiced is just sitting there... Because the data doesn't line up. The driver might mark a load delivered at 2pm in the app, but the actual proof of delivery shows 4pm, and the dispatcher entered 3:30 in Routemaster, and the rate confirmation has a different load number than what's in Salesforce because the dispatcher mistyped it. So finance is doing detective work on every single invoice.",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "Reduce dispatch time per load from 12 minutes to 8 minutes (30% reduction), which pays for itself in headcount savings. Reduce days-sales-outstanding from current state back to industry standard of ~5 days. Achieve measurable productivity win that justifies Phase 1 investment and earns Phase 2 funding.",
+      "confidence": "high",
+      "source_excerpt": "I think the cleanest metric is dispatch time per load. Right now our average dispatcher takes about twelve minutes to fully process a load through all three systems. If we can get that to eight minutes \u2014 call it a thirty percent reduction \u2014 that's a real productivity win and it pays for itself in headcount we don't have to hire next year. And if we fix invoicing reconciliation, the secondary metric is days-sales-outstanding, which should drop from where we are now back to industry standard, which is about five days.",
+      "contradiction_note": null
+    },
+    "success_criteria": {
+      "statement": "Phase 1 success defined as: (1) 30% reduction in dispatch time per load (from 12 min to 8 min), (2) DSO reduction to ~5 days (industry standard), (3) pilot in production by end of Q3 (Sept 30) to retain CFO funding approval, (4) measurable ROI that justifies Phase 2. Fixed-fee with milestone payments preferred over T&M.",
+      "confidence": "high",
+      "source_excerpt": "Q3 is because Rita \u2014 our CFO \u2014 agreed to the budget on the condition that we have something measurable in production by end of September. Otherwise the funding gets pulled into other projects... I think the cleanest metric is dispatch time per load... If we can get that to eight minutes \u2014 call it a thirty percent reduction \u2014 that's a real productivity win... And if we fix invoicing reconciliation, the secondary metric is days-sales-outstanding, which should drop from where we are now back to industry standard, which is about five days.",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "CFO (Rita Donovan) was burned by previous vendor in 2023 and is skeptical of consulting engagements; requires fixed-fee with milestone payments and measurable success metrics tied to dollars. Competitive engagement with two other firms. Budget range $250k-$400k stated by Sarah, but CRM indicates Rita has $300k cap and budget disagreement exists. Phase 1 funding will be pulled if Q3 pilot deadline is missed.",
+      "confidence": "high",
+      "source_excerpt": "Skeptical of consulting engagements; got burned by a previous vendor in 2023... I've earmarked $250,000 to $400,000 for Phase 1, depending on scope. Rita knows the range. I'd rather come in at the lower end and earn the next phase than overpromise. We've been burned by vendors who quoted big and delivered late... Q3 is because Rita \u2014 our CFO \u2014 agreed to the budget on the condition that we have something measurable in production by end of September. Otherwise the funding gets pulled into other projects.",
+      "contradiction_note": "Budget disagreement: Sarah states $250k-$400k range in transcript, but CRM risk flag indicates Rita has $300k cap and budget disagreement exists between Sarah and Rita."
+    }
+  },
+  "technical": {
+    "pain_points": {
+      "statement": "Custom Rails 5 dispatch tool (Routemaster, ~7 years old) maintained by only 2 engineers has no integration with Salesforce or driver mobile app, forcing manual data entry. Driver mobile app (React Native, last updated 2023) is too thin\u2014lacks photo upload, issue flagging, and dispatcher messaging, forcing drivers to fall back to 2-3 hours of phone calls per dispatcher per day. Tech integration from 2024 acquisitions (40% growth via two smaller brokerages) is incomplete.",
+      "confidence": "high",
+      "source_excerpt": "The dispatcher then has to manually go into Salesforce and update the opportunity record with the truck assignment, the driver, the rate. Then they have to send the load tender to the customer, which is a separate workflow. Then they have to ping the driver through our mobile app... So it's three systems for one assignment, and the dispatcher is the integration layer... Drivers can see their assigned load, accept it, and update status \u2014 at-pickup, loaded, at-delivery, delivered. That's it. They can't take photos, they can't flag issues, they can't message the dispatcher. So what happens is drivers fall back to phone calls.",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "Integrate Routemaster, Salesforce, and driver mobile app to eliminate manual double-entry. Enhance driver mobile app to support photos, issue flagging, and dispatcher messaging to reduce phone call volume. Approach must be incremental rather than full platform rebuild to meet 6-month Phase 1 timeline.",
+      "confidence": "high",
+      "source_excerpt": "I need a partner who can help me make the case for incremental change instead of a full rebuild. The rebuild is a 12-month project minimum and we don't have 12 months... The dispatcher then has to manually go into Salesforce and update the opportunity record... They can't take photos, they can't flag issues, they can't message the dispatcher.",
+      "contradiction_note": null
+    },
+    "success_criteria": {
+      "statement": "Automated data flow between Routemaster, Salesforce, and driver app that eliminates dispatcher manual entry for load assignments. Technical approach must gain CTO (Marcus Patel) sign-off despite his preference for full Routemaster rebuild. Solution must avoid creating new compliance work for ELD mandate (November deadline, owned by Rajiv Mehta).",
+      "confidence": "high",
+      "source_excerpt": "Marcus will want to dig into the technical approach \u2014 he has strong opinions about Routemaster because he built half of it... I need a partner who can help me make the case for incremental change instead of a full rebuild... There's an ELD compliance deadline in November \u2014 federal mandate update. Rajiv, our head of compliance, owns it. It's not officially in scope for this engagement, but if your approach can avoid creating new compliance work for him, that's a quiet point in your favor.",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "CTO Marcus Patel built half of Routemaster and has been pushing for full platform rebuild for a year; he is skeptical of incremental fixes and required for technical sign-off. Routemaster is Rails 5 (7 years old) with only 2 engineers maintaining it. TMS vendor evaluation is in progress but no selection made yet\u2014unclear how this impacts integration architecture. ELD compliance deadline (November federal mandate update) owned by Rajiv Mehta is not yet resourced and details are unclear.",
+      "confidence": "high",
+      "source_excerpt": "Marcus Patel \u2014 CTO. Required for technical sign-off. Owns the dispatch tool (custom Rails app, ~7 years old). Has been pushing internally for a full rebuild... How likely is Marcus to want to rebuild Routemaster from scratch? [pause] Pretty likely. He's been pushing for that for a year... TMS (Transportation Management System): Currently evaluating vendors. No selection made... There's an ELD compliance deadline in November \u2014 federal mandate update. Rajiv, our head of compliance, owns it... details unclear, will be discussed on the call.",
+      "contradiction_note": null
+    }
+  },
+  "operational": {
+    "pain_points": {
+      "statement": "40 dispatchers each process 60-90 load assignments per day across three disconnected systems (Routemaster, Salesforce, driver app), averaging 12 minutes per load. Dispatchers spend 2-3 hours per day on phone calls with drivers due to thin mobile app functionality. Finance has one person doing full-time invoice reconciliation detective work, drowning under 3-week backlog caused by data mismatches (delivery times, load numbers, rate confirmations).",
+      "confidence": "high",
+      "source_excerpt": "Sixty to ninety. Per dispatcher. And we have forty dispatchers... Every dispatcher tells me they spend two to three hours a day on the phone with drivers because the app doesn't do what they need... They have one person doing it full-time and she's drowning... The driver might mark a load delivered at 2pm in the app, but the actual proof of delivery shows 4pm, and the dispatcher entered 3:30 in Routemaster, and the rate confirmation has a different load number than what's in Salesforce because the dispatcher mistyped it.",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "Streamline dispatcher workflow to reduce time per load from 12 minutes to 8 minutes, eliminating need to hire additional headcount next year. Automate invoicing reconciliation to eliminate manual detective work and reduce finance backlog. Reduce dispatcher phone time with drivers by enhancing mobile app functionality. Priority order: (1) invoicing reconciliation (bleeding wound/cash flow), (2) dispatcher workflow (upstream cause of bad data), (3) driver app (quality of life, lowest urgency).",
+      "confidence": "high",
+      "source_excerpt": "If you had to rank those by what would unblock the most value, what's the order? Honestly, invoicing is the bleeding wound. We need to fix that first... Second is the dispatcher workflow \u2014 that's the source of the bad data that breaks invoicing, so fixing it would also fix invoicing over time, but it'll take longer to ship. Third is the driver app. It's a quality-of-life issue but it's not on fire... If we can get that to eight minutes \u2014 call it a thirty percent reduction \u2014 that's a real productivity win and it pays for itself in headcount we don't have to hire next year.",
+      "contradiction_note": null
+    },
+    "success_criteria": {
+      "statement": "30% reduction in dispatch time per load (12 min to 8 min) that pays for itself in avoided headcount growth. Invoicing backlog reduced from 3 weeks to industry standard ~5 days DSO. Pilot must be in production by Sept 30 (Q3 end) with measurable operational metrics. Dispatcher adoption is critical\u2014training plan must be included. Solution must not require shutting down Routemaster during implementation.",
+      "confidence": "high",
+      "source_excerpt": "I think the cleanest metric is dispatch time per load. Right now our average dispatcher takes about twelve minutes to fully process a load through all three systems. If we can get that to eight minutes \u2014 call it a thirty percent reduction \u2014 that's a real productivity win and it pays for itself in headcount we don't have to hire next year... Q3 is because Rita \u2014 our CFO \u2014 agreed to the budget on the condition that we have something measurable in production by end of September.",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "Dispatcher adoption is the critical success factor per engagement history (Cascade Freight lesson learned)\u2014training plan must be in scope but not yet defined. Data quality issues in legacy Routemaster system are undiscovered and could cause delays (per Midland Transport engagement, which had 3-week delay). Incomplete tech integration from 2024 acquisitions (two smaller brokerages) may introduce hidden data inconsistencies. ~600 contracted drivers must adopt enhanced mobile app.",
+      "confidence": "medium",
+      "source_excerpt": "Northwind grew 40% in 2024 by acquiring two smaller brokerages. Tech integration from those acquisitions is incomplete... ~600 contracted drivers",
+      "contradiction_note": null
+    }
+  },
+  "strategic": {
+    "pain_points": {
+      "statement": "Rapid growth (40% in 2024 via two acquisitions) has outpaced operational systems, creating scaling bottlenecks. Current manual workflows prevent hiring efficiency\u2014headcount growth required to maintain operations. 3-week invoicing delay represents significant cash flow drag on $85M annual revenue business. Competitive pressure from two other consulting firms evaluating same problems. Internal tension between incremental improvement (Sarah/Operations) vs. full platform rebuild (Marcus/CTO).",
+      "confidence": "high",
+      "source_excerpt": "Northwind grew 40% in 2024 by acquiring two smaller brokerages. Tech integration from those acquisitions is incomplete... Three weeks of revenue we should have invoiced is just sitting there... Two others. I'm being upfront about that. You're at the top of my list because of the Cascade Freight work, but I owe Rita due diligence... I need a partner who can help me make the case for incremental change instead of a full rebuild. The rebuild is a 12-month project minimum and we don't have 12 months.",
+      "contradiction_note": null
+    },
+    "desired_state": {
+      "statement": "Achieve operational scalability that supports continued growth without proportional headcount increases. Deliver measurable Phase 1 ROI that earns trust and funding for Phase 2 expansion. Establish incremental modernization path that avoids 12+ month full rebuild while satisfying CTO technical requirements. Maintain competitive advantage via operational efficiency improvements. Leverage Cascade Freight reference engagement as proof of domain expertise.",
+      "confidence": "high",
+      "source_excerpt": "I'd rather come in at the lower end and earn the next phase than overpromise... I need a partner who can help me make the case for incremental change instead of a full rebuild. The rebuild is a 12-month project minimum and we don't have 12 months... You're at the top of my list because of the Cascade Freight work... Sarah has asked us specifically because we did similar work for a peer brokerage (Cascade Freight) in 2024.",
+      "contradiction_note": null
+    },
+    "success_criteria": {
+      "statement": "Phase 1 delivers measurable ROI (30% dispatch efficiency, 5-day DSO) by Q3 that justifies Phase 2 investment and retains CFO confidence. Proposal addresses rebuild question head-on and makes case for incremental approach that satisfies all three stakeholders (Sarah/ops, Marcus/tech, Rita/finance). Win competitive selection by leveraging Cascade Freight reference and fixed-fee milestone structure. Avoid creating new compliance burden for November ELD deadline.",
+      "confidence": "high",
+      "source_excerpt": "I'll make sure the proposal addresses the rebuild question head-on rather than ducking it... I run discovery with you, you put together a proposal, I share it with Marcus and Rita. Marcus will want to dig into the technical approach... Rita will want to see the milestone payments and the success metrics tied to dollars. If they're both okay with it, we move... There's an ELD compliance deadline in November \u2014 federal mandate update... if your approach can avoid creating new compliance work for him, that's a quiet point in your favor.",
+      "contradiction_note": null
+    },
+    "risks_unknowns": {
+      "statement": "CFO trust deficit from 2023 vendor failure creates high bar for credibility and delivery accountability. Internal stakeholder alignment is fragile\u2014CTO wants rebuild, CFO wants cost control, VP Ops wants incremental wins. Competitive selection process with two other firms; Northwind is at top of list but not sole-sourced. Phase 2 funding contingent on Phase 1 success; no long-term commitment secured. TMS vendor selection in progress could disrupt integration architecture. November ELD compliance deadline not yet resourced and could become scope creep risk.",
+      "confidence": "high",
+      "source_excerpt": "Skeptical of consulting engagements; got burned by a previous vendor in 2023... How likely is Marcus to want to rebuild Routemaster from scratch? [pause] Pretty likely. He's been pushing for that for a year. I want to be honest with you \u2014 that's a fight I've been having internally... Two others. I'm being upfront about that... The six months is roughly what I told her I thought we'd need to make a real dent. It's not a hard number, it's a budgeting horizon... TMS (Transportation Management System): Currently evaluating vendors. No selection made... There's an ELD compliance deadline in November \u2014 federal mandate update. Rajiv, our head of compliance, owns it. It's not officially in scope for this engagement.",
+      "contradiction_note": null
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "issues": [
+    {
+      "issue_id": "budget_contradiction_not_in_open_questions",
+      "location": "Pricing Approach",
+      "severity": "critical",
+      "description": "The proposal states pricing of $295,000 in the main Pricing section as if it's finalized, but the Client Matrix explicitly flags a budget contradiction: Sarah stated $250k-$400k range, while CRM indicates Rita has a $300k cap and a budget disagreement exists. This contradiction is mentioned in Open Questions but the main pricing section doesn't acknowledge the uncertainty.",
+      "fix_suggestion": "In the Pricing Approach section, add a clear statement acknowledging the budget uncertainty before presenting the $295,000 figure. Example: 'Based on Sarah's stated range of $250k-$400k and the CRM-indicated $300k cap, we propose a fixed-fee of $295,000. However, we recognize there may be budget alignment needed between Sarah and Rita (see Open Question #1) and are prepared to discuss scope adjustments if required.'"
+    },
+    {
+      "issue_id": "eld_compliance_details_missing",
+      "location": "Open Questions",
+      "severity": "high",
+      "description": "Open Question #3 asks about ELD compliance deadline details, but the Client Matrix explicitly states 'details unclear, will be discussed on the call' and Sarah said details would come later. The proposal should acknowledge we're still waiting for this information rather than framing it as a question we're asking for the first time.",
+      "fix_suggestion": "Reframe Open Question #3 to acknowledge: 'Sarah indicated ELD compliance deadline details would be discussed on a follow-up call. We are still awaiting this information and need to understand: [existing sub-questions].' This shows we're tracking the promised follow-up rather than asking cold."
+    },
+    {
+      "issue_id": "pricing_methodology_lacks_evidence",
+      "location": "Pricing Approach",
+      "severity": "high",
+      "description": "The 'Pricing Methodology' section provides a detailed cost-build breakdown with specific hourly estimates and blended rates ($3,200/day, $2,900/day, etc.), but the Client Matrix contains no evidence supporting these specific numbers. This appears to be fabricated detail rather than grounded in discovery data.",
+      "fix_suggestion": "Either: (1) Remove the detailed cost-build breakdown and replace with a simpler justification (e.g., 'Based on industry-standard rates for freight brokerage workflow automation and the 6-month scope outlined above'), or (2) Acknowledge these are estimates: 'Our fee reflects estimated effort of [hours] at blended rates typical for this type of engagement ($X-$Y/day range).'"
+    },
+    {
+      "issue_id": "benchmark_data_unsourced",
+      "location": "Pricing Approach",
+      "severity": "medium",
+      "description": "The 'Benchmark Context' section provides specific percentile pricing data (p25: $180k, p50: $300k, p75: $480k, p90: $750k) and claims 'industry benchmarks for 6-month workflow automation and system integration engagements in the freight brokerage sector.' The Client Matrix contains no evidence supporting these specific numbers or their source.",
+      "fix_suggestion": "Either: (1) Remove the specific percentile table and replace with a general statement ('Our proposed fee is consistent with mid-market freight broker budgets for similar engagements'), or (2) Cite the source of the benchmark data if it exists, or (3) Frame as estimates: 'Based on our experience with similar engagements, typical pricing ranges from $180k-$750k depending on scope, with mid-market brokers typically in the $250k-$400k range.'"
+    },
+    {
+      "issue_id": "dispatcher_training_ownership_unclear",
+      "location": "Open Questions",
+      "severity": "medium",
+      "description": "Open Question #5 asks about dispatcher training ownership, but the proposal's Approach section already commits to 'training materials and change management' and 'detailed training and change management plan' without acknowledging this is still undefined. This creates an internal contradiction.",
+      "fix_suggestion": "In the Approach section, soften the training commitment to acknowledge it's still being scoped: 'We will work with Northwind to develop a training and change management plan (see Open Question #5 for ownership clarification).' This maintains consistency between the Approach and Open Questions sections."
+    },
+    {
+      "issue_id": "success_metrics_baseline_assumption",
+      "location": "Understanding",
+      "severity": "medium",
+      "description": "The proposal states '12 minutes per load' and '3-week backlog' as confirmed facts throughout, but Open Question #7 correctly notes these may be anecdotal rather than measured. The Understanding section should acknowledge measurement uncertainty for baseline metrics.",
+      "fix_suggestion": "In the Understanding section, add a brief acknowledgment: 'Based on Sarah's estimates, dispatchers average 12 minutes per load and invoicing is 3 weeks behind. We will validate these baselines with measured data during the discovery phase (Month 1).'"
+    },
+    {
+      "issue_id": "tms_vendor_timeline_impact_understated",
+      "location": "Open Questions",
+      "severity": "medium",
+      "description": "Open Question #2 asks about TMS vendor selection timeline, but the Approach section confidently states the integration layer is 'TMS-agnostic' and 'preserves optionality' without acknowledging the significant risk that a TMS selection during Phase 1 could invalidate the entire integration architecture. The risk mitigation table mentions this but doesn't adequately convey the severity.",
+      "fix_suggestion": "In the Risk Mitigation table, escalate the TMS vendor selection risk from a simple mitigation statement to a more explicit acknowledgment: 'If a TMS vendor is selected and implemented during Phase 1, it may require significant rework of the integration layer. We recommend clarifying the TMS timeline before finalizing the engagement scope (see Open Question #2).'"
+    },
+    {
+      "issue_id": "acquisition_system_integration_detail_missing",
+      "location": "Open Questions",
+      "severity": "low",
+      "description": "Open Question #4 asks about 2024 acquisition system integration, but the Understanding section states 'tech integration from 2024 acquisitions is incomplete' as a fact without acknowledging we don't yet know the details. This creates a minor inconsistency.",
+      "fix_suggestion": "In the Understanding section, soften the acquisition integration statement: 'Northwind acquired two smaller brokerages in 2024, and Sarah indicated tech integration from those acquisitions is incomplete. We will assess the extent of this integration gap during discovery (see Open Question #4).'"
+    },
+    {
+      "issue_id": "marcus_sign_off_process_not_addressed_in_approach",
+      "location": "Approach",
+      "severity": "low",
+      "description": "Open Question #6 asks about Marcus's preferred technical review cadence and sign-off process, but the Approach section doesn't mention how we'll engage Marcus throughout the project. Given Marcus is described as 'required for technical sign-off' and 'skeptical of incremental fixes,' this is a notable omission.",
+      "fix_suggestion": "In the Approach section under 'Risk Mitigation' or in a new 'Stakeholder Engagement' subsection, add: 'We will establish a regular technical review cadence with Marcus and his team (see Open Question #6) to ensure the integration architecture meets CTO requirements and earns technical sign-off at each milestone.'"
+    }
+  ],
+  "overall_score": 7,
+  "strengths": [
+    "Excellent structure and comprehensiveness - all required sections present with strong narrative flow",
+    "Outstanding treatment of the rebuild vs. incremental tension - directly addresses Marcus's concerns with a clear philosophical stance",
+    "Strong stakeholder landscape analysis - accurately captures the three-way dynamic between Sarah, Marcus, and Rita",
+    "Open Questions section is thorough and demonstrates awareness of key uncertainties, particularly budget alignment",
+    "Pricing is positioned just below the $300k cap, showing strategic awareness of Rita's constraints",
+    "Risk mitigation table is comprehensive and addresses most major concerns from the Client Matrix",
+    "Timeline and milestones are realistic and aligned with the Q3 deadline requirement",
+    "Tone is professional, specific, and client-ready throughout"
+  ],
+  "recommendation": "revise",
+  "reasoning": "This is a strong proposal (score: 7/10) that demonstrates excellent understanding of the client's situation and addresses most stakeholder concerns effectively. However, it has one critical issue and several high-severity problems that prevent approval: (1) The budget contradiction is acknowledged in Open Questions but not in the main Pricing section, creating a false sense of finality around the $295k figure when budget alignment is still needed. (2) The pricing methodology and benchmark data appear to contain fabricated specifics not grounded in the Client Matrix. (3) Minor internal inconsistencies between the Approach section and Open Questions create credibility concerns. These issues are fixable in one revision round. The proposal is close to approval-ready but needs these corrections to meet the 'factually accurate vs. Client Matrix' and 'internal consistency' criteria.",
+  "iteration": 2
+}
