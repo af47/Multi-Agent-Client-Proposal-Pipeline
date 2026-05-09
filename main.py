@@ -2,15 +2,16 @@
 """Client Proposal Pipeline — CLI Entrypoint.
 
 Usage:
-  python main.py                            # Run both transcripts interactively
-  python main.py --transcript a             # Transcript A only
-  python main.py --transcript b             # Transcript B only
-  python main.py --transcript both          # Both transcripts (default)
-  python main.py --non-interactive          # Auto-approve (no stdin required)
-  python main.py --resume <run_id>          # Resume a saved run
-  python main.py --eval                     # Run both eval scripts on saved runs
-  python main.py --list-runs               # List all saved runs
-  python main.py --max-iterations 3         # Set iteration limit
+  python main.py                              # Run both transcripts interactively
+  python main.py --transcript a              # Transcript A only
+  python main.py --transcript b              # Transcript B only
+  python main.py --non-interactive           # Auto-approve (no stdin required)
+  python main.py --resume <run_id>           # Resume a saved run
+  python main.py --eval                      # Run both eval scripts on saved runs
+  python main.py --list-runs                 # List all saved runs
+  python main.py --max-iterations 3          # Set iteration limit
+  python main.py --sonnet-model <model>      # Override Sonnet model string
+  python main.py --haiku-model <model>       # Override Haiku model string
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from src.core.claude_client import ClaudeClient, PipelineError
+from src.core.model_router import ModelRouter
 from src.core.orchestrator import PipelineOrchestrator
 from src.core.state import RunState
 from src.utils.loader import InputLoader
@@ -77,9 +79,14 @@ def parse_args() -> argparse.Namespace:
         help="Maximum number of proposal revision iterations (default: 5)",
     )
     parser.add_argument(
-        "--model",
-        default=os.getenv("CLAUDE_MODEL", "claude-3-5-sonnet-20241022"),
-        help="Claude model to use (default: claude-3-5-sonnet-20241022)",
+        "--sonnet-model",
+        default=os.getenv("SONNET_MODEL", "claude-3-5-sonnet-20241022"),
+        help="Sonnet model for heavy tasks: debrief, proposal, critique (default: claude-3-5-sonnet-20241022)",
+    )
+    parser.add_argument(
+        "--haiku-model",
+        default=os.getenv("HAIKU_MODEL", "claude-3-5-haiku-20241022"),
+        help="Haiku model for lightweight tasks: feedback translation, schema retries (default: claude-3-5-haiku-20241022)",
     )
     return parser.parse_args()
 
@@ -142,14 +149,22 @@ def list_runs() -> None:
     print(f"{'─' * 80}\n")
 
 
+def _build_router(sonnet_model: str, haiku_model: str) -> ModelRouter:
+    """Build a ModelRouter with CLI-overridden model strings."""
+    os.environ["SONNET_MODEL"] = sonnet_model
+    os.environ["HAIKU_MODEL"] = haiku_model
+    return ModelRouter()
+
+
 def run_pipeline(
     transcript_filter: str | None,
     non_interactive: bool,
     max_iterations: int,
-    model: str,
+    sonnet_model: str,
+    haiku_model: str,
     run_label: str,
 ) -> RunState:
-    """Run the pipeline for a given transcript filter."""
+    """Run the pipeline for a given transcript filter with smart model routing."""
     # Validate API key early
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
@@ -171,17 +186,20 @@ def run_pipeline(
         print(f"❌ ERROR: {e}")
         sys.exit(1)
 
+    router = _build_router(sonnet_model, haiku_model)
+
     print(f"\n{'═' * 60}")
     print(f"  CLIENT PROPOSAL PIPELINE")
     print(f"{'═' * 60}")
     print(f"  Inputs:   {inputs.summary()}")
-    print(f"  Model:    {model}")
     print(f"  Max iter: {max_iterations}")
     print(f"  Mode:     {'non-interactive' if non_interactive else 'interactive'}")
+    print()
+    print(router.describe())
     print(f"{'═' * 60}\n")
 
     # Initialize client and orchestrator
-    client = ClaudeClient(api_key=api_key, model=model)
+    client = ClaudeClient(api_key=api_key, router=router)
     orchestrator = PipelineOrchestrator(
         client=client,
         runs_dir=RUNS_DIR,
@@ -194,18 +212,17 @@ def run_pipeline(
     return state
 
 
-def resume_pipeline(run_id: str, non_interactive: bool, model: str) -> RunState:
+def resume_pipeline(run_id: str, non_interactive: bool) -> RunState:
     """Resume a previously saved pipeline run."""
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         print("❌ ERROR: ANTHROPIC_API_KEY is not set.")
         sys.exit(1)
 
-    # Load minimal inputs (needed for feedback context only)
     loader = InputLoader(INPUTS_DIR)
     inputs = loader.load()
 
-    client = ClaudeClient(api_key=api_key, model=model)
+    client = ClaudeClient(api_key=api_key, router=ModelRouter())
     orchestrator = PipelineOrchestrator(
         client=client,
         runs_dir=RUNS_DIR,
@@ -258,7 +275,6 @@ def main() -> None:
             state = resume_pipeline(
                 run_id=args.resume,
                 non_interactive=args.non_interactive,
-                model=args.model,
             )
             print_final_summary(state)
         except PipelineError as e:
@@ -267,8 +283,6 @@ def main() -> None:
         return
 
     # ── Main pipeline run ────────────────────────────────────────────────────
-
-    transcript_filter = None if args.transcript == "both" else args.transcript
 
     completed_run_ids: list[str] = []
 
@@ -279,7 +293,8 @@ def main() -> None:
                 transcript_filter="a",
                 non_interactive=args.non_interactive,
                 max_iterations=args.max_iterations,
-                model=args.model,
+                sonnet_model=args.sonnet_model,
+                haiku_model=args.haiku_model,
                 run_label="intake+transcript_a",
             )
             print_final_summary(state_a)
@@ -295,7 +310,8 @@ def main() -> None:
                 transcript_filter="b",
                 non_interactive=args.non_interactive,
                 max_iterations=args.max_iterations,
-                model=args.model,
+                sonnet_model=args.sonnet_model,
+                haiku_model=args.haiku_model,
                 run_label="intake+transcript_b",
             )
             print_final_summary(state_b)

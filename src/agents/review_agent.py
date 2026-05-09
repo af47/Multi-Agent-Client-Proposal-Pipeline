@@ -15,6 +15,7 @@ import json
 from typing import Optional
 
 from src.core.claude_client import ClaudeClient, AgentResponse
+from src.core.model_router import ModelTier
 from src.schemas.matrix import ClientMatrix
 from src.schemas.proposal import ProposalOutput
 from src.schemas.review import (
@@ -140,6 +141,7 @@ class ReviewAgent:
             output_schema=CritiqueOutput,
             tools=None,  # Review agent uses no tools — pure reasoning
             temperature=0.2,
+            model_tier=ModelTier.SONNET,  # Deep scoring requires Sonnet
         )
 
         critique: CritiqueOutput = response.parsed
@@ -166,6 +168,7 @@ class ReviewAgent:
             validation_retries=response.validation_retries,
             api_retries=response.api_retries,
             model=response.model,
+            model_tier=response.model_tier,
             success=True,
         )
 
@@ -204,6 +207,7 @@ class ReviewAgent:
             output_schema=TranslatedFeedback,
             tools=None,
             temperature=0.2,
+            model_tier=ModelTier.HAIKU,  # Classification task — Haiku is sufficient
         )
 
         translated: TranslatedFeedback = response.parsed
@@ -226,6 +230,7 @@ class ReviewAgent:
             validation_retries=response.validation_retries,
             api_retries=response.api_retries,
             model=response.model,
+            model_tier=response.model_tier,
             success=True,
         )
 

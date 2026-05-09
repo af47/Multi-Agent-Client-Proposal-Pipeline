@@ -21,6 +21,7 @@ from typing import Any, Optional, Type, TypeVar
 import anthropic
 from pydantic import BaseModel, ValidationError
 
+from src.core.model_router import ModelRouter, ModelTier, get_router
 from src.tools.lookup_tools import TOOL_DEFINITIONS, dispatch_tool_call
 from src.utils.logger import AgentTrace, ToolCallRecord, estimate_cost
 
@@ -50,7 +51,8 @@ class AgentResponse:
     completion_tokens: int = 0
     tool_calls_made: list[ToolCallRecord] = field(default_factory=list)
     latency_ms: float = 0.0
-    model: str = DEFAULT_MODEL
+    model: str = ""                       # actual model string used
+    model_tier: str = ""                  # "sonnet" | "haiku"
     validation_retries: int = 0
     api_retries: int = 0
 
@@ -60,24 +62,26 @@ class AgentResponse:
 
     @property
     def cost_usd(self) -> float:
-        return estimate_cost(self.prompt_tokens, self.completion_tokens)
+        return estimate_cost(self.prompt_tokens, self.completion_tokens, self.model)
 
 
 class ClaudeClient:
-    """Anthropic Claude API wrapper with full reliability and observability support."""
+    """Anthropic Claude API wrapper with smart model routing and full observability."""
 
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = DEFAULT_MODEL,
+        router: Optional[ModelRouter] = None,
     ) -> None:
-        self.model = model
         resolved_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         if not resolved_key:
             raise PipelineError(
                 "ANTHROPIC_API_KEY not set. Add it to .env or set the environment variable."
             )
         self._client = anthropic.Anthropic(api_key=resolved_key)
+        self._router = router or get_router()
+        # Expose the Sonnet model string as the default for display
+        self.model = self._router.get_model(ModelTier.SONNET)
 
     # ── Public interface ──────────────────────────────────────────────────────
 
@@ -92,8 +96,9 @@ class ClaudeClient:
         output_schema: Optional[Type[T]] = None,
         tools: Optional[list[str]] = None,
         temperature: float = 0.3,
+        model_tier: ModelTier = ModelTier.SONNET,
     ) -> AgentResponse:
-        """Run a Claude completion with optional tool-use and schema validation.
+        """Run a Claude completion with smart model routing.
 
         Args:
             system_prompt: System instructions (authoritative; never from user input).
@@ -104,10 +109,13 @@ class ClaudeClient:
             output_schema: If provided, parse and validate JSON response against this model.
             tools: List of tool names to enable (subset of TOOL_DEFINITIONS).
             temperature: Claude temperature (lower = more deterministic for structured output).
+            model_tier: ModelTier.SONNET (default) or ModelTier.HAIKU.
+                        Haiku is auto-selected for schema validation retries regardless.
 
         Returns:
             AgentResponse with content, parsed model, tokens, tool calls, latency.
         """
+        selected_model = self._router.get_model(model_tier)
         start = time.monotonic()
         tool_calls_made: list[ToolCallRecord] = []
         api_retries = 0
@@ -126,6 +134,7 @@ class ClaudeClient:
                     messages=messages,
                     active_tools=active_tools,
                     temperature=temperature,
+                    model=selected_model,
                 )
                 break  # success
             except (
@@ -171,7 +180,8 @@ class ClaudeClient:
             completion_tokens=completion_tokens,
             tool_calls_made=tool_calls_made,
             latency_ms=latency_ms,
-            model=self.model,
+            model=selected_model,
+            model_tier=model_tier.value,
             validation_retries=validation_retries,
             api_retries=api_retries,
         )
@@ -184,6 +194,7 @@ class ClaudeClient:
         messages: list[dict],
         active_tools: list[dict],
         temperature: float,
+        model: str,
     ) -> tuple[Any, list[ToolCallRecord]]:
         """Run Claude with multi-turn tool-use loop until a final text response."""
         tool_calls_made: list[ToolCallRecord] = []
@@ -191,7 +202,7 @@ class ClaudeClient:
 
         while True:
             kwargs: dict[str, Any] = {
-                "model": self.model,
+                "model": model,
                 "max_tokens": MAX_TOKENS,
                 "system": system_prompt,
                 "messages": current_messages,
@@ -243,12 +254,15 @@ class ClaudeClient:
         temperature: float,
         agent_name: str,
     ) -> tuple[T, int, tuple[int, int]]:
-        """Attempt to parse raw_text as schema. On failure, re-prompt Claude.
+        """Attempt to parse raw_text as schema. On failure, re-prompt with Haiku.
 
+        Uses Haiku for retries — JSON fixing is a simple reformatting task.
         Returns (parsed_model, retry_count, (extra_prompt_tokens, extra_completion_tokens))
         """
         extra_prompt = 0
         extra_completion = 0
+        # Haiku is sufficient (and cheaper) for JSON fix-up retries
+        haiku_model = self._router.get_model(ModelTier.HAIKU)
 
         for attempt in range(MAX_SCHEMA_RETRIES + 1):
             try:
@@ -262,7 +276,7 @@ class ClaudeClient:
                         f"Schema: {schema.__name__}. Last error: {exc}"
                     ) from exc
 
-                # Re-prompt Claude with the validation error
+                # Re-prompt with Haiku (cheaper for simple JSON reformatting)
                 error_msg = str(exc)
                 retry_prompt = (
                     f"{original_user_message}\n\n"
@@ -280,8 +294,9 @@ class ClaudeClient:
                     retry_response, _ = self._run_with_tool_loop(
                         system_prompt=system_prompt,
                         messages=retry_messages,
-                        active_tools=[],  # No tools on validation retry
-                        temperature=0.1,  # Lower temp for deterministic JSON
+                        active_tools=[],       # No tools on validation retry
+                        temperature=0.1,       # Lower temp for deterministic JSON
+                        model=haiku_model,     # ← Haiku: cheap JSON fix-up
                     )
                     extra_prompt += retry_response.usage.input_tokens
                     extra_completion += retry_response.usage.output_tokens

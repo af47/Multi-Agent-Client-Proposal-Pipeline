@@ -16,17 +16,19 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-# ── Claude 3.5 Sonnet pricing (per million tokens) ──────────────────────────
-_COST_PER_M_INPUT = 3.00   # USD
-_COST_PER_M_OUTPUT = 15.00  # USD
+# ── Cost estimation ─────────────────────────────────────────────────────────
+# Delegated to ModelRouter so Haiku and Sonnet are priced correctly.
+# Import lazily to avoid circular imports at module load time.
 
 
-def estimate_cost(prompt_tokens: int, completion_tokens: int) -> float:
-    """Estimate USD cost for a single Claude API call."""
-    return (
-        (prompt_tokens / 1_000_000) * _COST_PER_M_INPUT
-        + (completion_tokens / 1_000_000) * _COST_PER_M_OUTPUT
-    )
+def estimate_cost(prompt_tokens: int, completion_tokens: int, model: str = "") -> float:
+    """Estimate USD cost for a single Claude API call.
+
+    Uses ModelRouter for per-model pricing (Haiku vs Sonnet).
+    Falls back to Sonnet rates if model is unrecognised.
+    """
+    from src.core.model_router import estimate_cost_for_model  # lazy import
+    return estimate_cost_for_model(model, prompt_tokens, completion_tokens)
 
 
 @dataclass
@@ -73,8 +75,9 @@ class AgentTrace:
     validation_retries: int = 0
     api_retries: int = 0
 
-    # Model info
+    # Model info — includes tier label for clarity in traces
     model: str = ""
+    model_tier: str = ""   # "sonnet" | "haiku" | ""
 
     # Status
     success: bool = True
