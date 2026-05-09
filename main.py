@@ -30,7 +30,7 @@ from src.core.claude_client import ClaudeClient, PipelineError
 from src.core.model_router import ModelRouter
 from src.core.orchestrator import PipelineOrchestrator
 from src.core.state import RunState
-from src.utils.loader import InputLoader
+from src.utils.loader import InputLoader, PipelineInputs
 from evals.eval_runner import run_suite, save_report, print_suite_summary
 
 BASE_DIR = Path(__file__).parent
@@ -248,11 +248,11 @@ def print_final_summary(state: RunState) -> None:
     print(f"  Total tokens:    {state.total_tokens:,}")
     if proposal:
         print(f"  Final proposal:  v{proposal.version} ({proposal.word_count()} words)")
-        print(f"  Saved to:        runs/{state.run_id}/latest_proposal.md")
+        print(f"  Saved to:        runs/{state.run_id}/proposal.md")
     if critique:
         print(f"  Final score:     {critique.overall_score}/10")
         print(f"  Recommendation:  {critique.recommendation.value}")
-    print(f"  Full trace:      runs/{state.run_id}/traces.jsonl")
+    print(f"  Full trace:      runs/{state.run_id}/logs.json")
     print(f"{'═' * 60}\n")
 
 
@@ -284,40 +284,50 @@ def main() -> None:
 
     # ── Main pipeline run ────────────────────────────────────────────────────
 
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        print("❌ ERROR: ANTHROPIC_API_KEY is not set.")
+        sys.exit(1)
+
+    loader = InputLoader(INPUTS_DIR)
+    
+    # Load intake.md and all matching transcripts once
+    filter_val = None if args.transcript == "both" else args.transcript
+    try:
+        all_inputs = loader.load(transcript_filter=filter_val)
+    except FileNotFoundError as e:
+        print(f"❌ ERROR: {e}")
+        sys.exit(1)
+
+    router = _build_router(args.sonnet_model, args.haiku_model)
+    client = ClaudeClient(api_key=api_key, router=router)
+    orchestrator = PipelineOrchestrator(
+        client=client,
+        runs_dir=RUNS_DIR,
+        max_iterations=args.max_iterations,
+        non_interactive=args.non_interactive,
+    )
+
     completed_run_ids: list[str] = []
 
-    # Run transcript A
-    if args.transcript in ("a", "both"):
+    # Iterate through transcripts sequentially
+    for t_name, t_content in all_inputs.transcripts.items():
+        print(f"\n{'═' * 60}")
+        print(f"  PROCESSING: {t_name}")
+        print(f"{'═' * 60}")
+        
+        single_inputs = PipelineInputs(
+            intake=all_inputs.intake,
+            transcripts={t_name: t_content},
+            run_label=f"intake+{t_name}",
+        )
+        
         try:
-            state_a = run_pipeline(
-                transcript_filter="a",
-                non_interactive=args.non_interactive,
-                max_iterations=args.max_iterations,
-                sonnet_model=args.sonnet_model,
-                haiku_model=args.haiku_model,
-                run_label="intake+transcript_a",
-            )
-            print_final_summary(state_a)
-            completed_run_ids.append(state_a.run_id)
+            state = orchestrator.run(single_inputs, run_id=t_name)
+            print_final_summary(state)
+            completed_run_ids.append(state.run_id)
         except PipelineError as e:
-            print(f"❌ Pipeline error (transcript A): {e}")
-            sys.exit(1)
-
-    # Run transcript B
-    if args.transcript in ("b", "both"):
-        try:
-            state_b = run_pipeline(
-                transcript_filter="b",
-                non_interactive=args.non_interactive,
-                max_iterations=args.max_iterations,
-                sonnet_model=args.sonnet_model,
-                haiku_model=args.haiku_model,
-                run_label="intake+transcript_b",
-            )
-            print_final_summary(state_b)
-            completed_run_ids.append(state_b.run_id)
-        except PipelineError as e:
-            print(f"❌ Pipeline error (transcript B): {e}")
+            print(f"❌ Pipeline error ({t_name}): {e}")
             sys.exit(1)
 
     # ── Auto-run evals on completed runs ────────────────────────────────────
