@@ -1,0 +1,223 @@
+{
+  "crm": {
+    "Northwind Logistics": {
+      "company_id": "NW-001",
+      "industry": "freight brokerage",
+      "size": "mid-market",
+      "revenue_approx_m": 85,
+      "relationship_status": "prospect",
+      "relationship_since": null,
+      "previous_interactions": [
+        {
+          "date": "2026-04-10",
+          "type": "referral_inquiry",
+          "note": "Inbound via Cascade Freight referral. Sarah Chen contacted via email."
+        },
+        {
+          "date": "2026-04-14",
+          "type": "discovery_call",
+          "note": "32-minute call with Sarah Chen (VP Ops). Identified 3 core pain points."
+        },
+        {
+          "date": "2026-04-21",
+          "type": "stakeholder_call",
+          "note": "64-minute call with Sarah Chen, Marcus Patel (CTO), Rita Donovan (CFO)."
+        }
+      ],
+      "contacts": [
+        {
+          "name": "Sarah Chen",
+          "title": "VP Operations",
+          "email": "sarah.chen@northwindlog.com",
+          "role": "champion",
+          "sentiment": "positive",
+          "notes": "Owns operational pain. Has CFO buy-in. Primary decision driver."
+        },
+        {
+          "name": "Marcus Patel",
+          "title": "CTO",
+          "email": "marcus.patel@northwindlog.com",
+          "role": "technical_approver",
+          "sentiment": "skeptical",
+          "notes": "Built Routemaster. Wants full platform rebuild. Skeptical of incremental fixes."
+        },
+        {
+          "name": "Rita Donovan",
+          "title": "CFO",
+          "email": "rita.donovan@northwindlog.com",
+          "role": "budget_holder",
+          "sentiment": "guarded",
+          "notes": "Burned by previous vendor in 2023. Wants fixed-fee, milestone payments, single number."
+        },
+        {
+          "name": "Rajiv Mehta",
+          "title": "Head of Compliance",
+          "email": null,
+          "role": "compliance_stakeholder",
+          "sentiment": "unknown",
+          "notes": "Owns ELD compliance. Not yet engaged. November deadline critical."
+        }
+      ],
+      "competitive_situation": {
+        "is_competitive": true,
+        "competitors_count": 2,
+        "our_position": "top_of_list",
+        "differentiator": "Cascade Freight reference engagement"
+      },
+      "risk_flags": [
+        "CFO burned by previous vendor (2023) — trust deficit",
+        "Budget disagreement between Sarah ($250-400k) and Rita ($300k cap)",
+        "CTO favors full platform rebuild over incremental approach",
+        "ELD compliance deadline (Nov 15) not yet resourced"
+      ]
+    },
+    "Cascade Freight": {
+      "company_id": "CF-001",
+      "industry": "freight brokerage",
+      "size": "mid-market",
+      "relationship_status": "client",
+      "relationship_since": "2024-01",
+      "previous_interactions": [
+        {
+          "date": "2024-01",
+          "type": "engagement_start",
+          "note": "6-month workflow automation engagement. Dispatcher workflow + invoicing."
+        },
+        {
+          "date": "2024-07",
+          "type": "engagement_complete",
+          "note": "Phase 1 delivered. 34% dispatch time reduction. DSO from 18 days to 5 days."
+        }
+      ],
+      "contacts": [
+        {
+          "name": "David Kim",
+          "title": "COO",
+          "email": "d.kim@cascadefreight.com",
+          "role": "champion",
+          "sentiment": "very_positive",
+          "notes": "Provided reference for Northwind Logistics."
+        }
+      ]
+    }
+  },
+  "pricing_benchmarks": {
+    "freight brokerage": {
+      "base_engagement": {
+        "p25": 180000,
+        "p50": 300000,
+        "p75": 480000,
+        "p90": 750000
+      },
+      "typical_structure": "Fixed-fee with 3 milestone payments: 40% on kickoff, 40% on pilot delivery, 20% on final acceptance",
+      "day_rate_range": "$2,800–$3,800/day (senior consultant)",
+      "notes": [
+        "Mid-market freight brokers typically budget $250k–$400k for 6-month workflow automation",
+        "Invoicing/reconciliation automation typically delivers ROI within 90 days",
+        "Fixed-fee strongly preferred over T&M in this segment (CFO driven)",
+        "Milestone-based payment reduces client risk perception significantly"
+      ],
+      "comparable_clients": [
+        "Cascade Freight (2024): $285k, 6 months, 34% dispatch time reduction",
+        "Midland Transport (2023): $320k, 7 months, DSO from 22 to 6 days"
+      ]
+    },
+    "logistics": {
+      "base_engagement": {
+        "p25": 200000,
+        "p50": 350000,
+        "p75": 550000,
+        "p90": 900000
+      },
+      "typical_structure": "Fixed-fee with milestone payments",
+      "day_rate_range": "$3,000–$4,000/day",
+      "notes": [
+        "Logistics sector typically 15-20% higher rates than freight brokerage",
+        "ELD compliance work commands premium: +$50k–$100k if included"
+      ],
+      "comparable_clients": []
+    }
+  },
+  "past_engagements": [
+    {
+      "engagement_id": "ENG-2024-001",
+      "client": "Cascade Freight",
+      "industry": "freight brokerage",
+      "problem_types": ["workflow automation", "data integration", "invoicing reconciliation"],
+      "duration_months": 6,
+      "fee_usd": 285000,
+      "contract_type": "fixed_fee_milestones",
+      "year": 2024,
+      "team_size": 4,
+      "outcomes": {
+        "dispatch_time_reduction_pct": 34,
+        "dso_before_days": 18,
+        "dso_after_days": 5,
+        "pilot_delivered_on_time": true,
+        "client_satisfaction": "very_high",
+        "phase_2_awarded": true
+      },
+      "tech_stack": {
+        "client": ["Rails 4 dispatch system", "Salesforce", "React Native mobile app", "QuickBooks"],
+        "built": ["Python integration layer", "Salesforce REST API connector", "mobile app enhancements"]
+      },
+      "lessons_learned": [
+        "Dispatcher adoption is the critical success factor — training plan must be in scope",
+        "Invoicing reconciliation automation delivers fastest measurable ROI",
+        "CTO buy-in on architecture is essential before build starts",
+        "ELD proximity: coordinate with compliance team even if not in scope"
+      ],
+      "differentiators_cited_by_client": [
+        "Fixed-fee commitment with milestone accountability",
+        "Domain expertise in freight brokerage workflows",
+        "Incremental approach that didn't require shutting down Routemaster equivalent"
+      ]
+    },
+    {
+      "engagement_id": "ENG-2023-002",
+      "client": "Midland Transport",
+      "industry": "freight brokerage",
+      "problem_types": ["data integration", "invoicing reconciliation", "reporting automation"],
+      "duration_months": 7,
+      "fee_usd": 320000,
+      "contract_type": "fixed_fee_milestones",
+      "year": 2023,
+      "team_size": 3,
+      "outcomes": {
+        "dso_before_days": 22,
+        "dso_after_days": 6,
+        "pilot_delivered_on_time": false,
+        "delay_weeks": 3,
+        "client_satisfaction": "high",
+        "phase_2_awarded": false
+      },
+      "lessons_learned": [
+        "3-week delay caused by undiscovered data quality issues in legacy system",
+        "Always include data audit phase before build",
+        "Scope the ELD work separately — it expands unexpectedly"
+      ]
+    },
+    {
+      "engagement_id": "ENG-2024-003",
+      "client": "Pacific Freight Partners",
+      "industry": "freight brokerage",
+      "problem_types": ["platform migration", "workflow automation"],
+      "duration_months": 14,
+      "fee_usd": 680000,
+      "contract_type": "time_and_materials",
+      "year": 2024,
+      "team_size": 6,
+      "outcomes": {
+        "pilot_delivered_on_time": false,
+        "delay_weeks": 8,
+        "client_satisfaction": "medium",
+        "phase_2_awarded": false
+      },
+      "lessons_learned": [
+        "Full platform rebuilds in freight brokerage routinely exceed timeline 40-60%",
+        "T&M contracts erode client trust when delays occur",
+        "Incremental approach with portability planning outperforms big-bang migrations"
+      ]
+    }
+  ]
+}
